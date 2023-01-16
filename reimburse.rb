@@ -80,23 +80,35 @@ SET_4 = [
 class Reimburser  
   
   def calculate(projects) 
-    set_start_date = projects.map{|p| Date.parse(p[:start_date])}.min
-    set_end_date = projects.map{|p| Date.parse(p[:end_date])}.max
-    set_range = (set_start_date..set_end_date)
-    days = []
-    set_range.each_with_index do |d, i| 
-      # First day and last day of a project, or sequence of projects, is a travel day.
-      if i == 0 || i == set_range.to_a.length - 1
-        days << :travel
-        next
-      end
-      
-      #Any day in the middle of a project, or sequence of projects, is considered a full day.
-      days << :full
+    # set_start_date = projects.map{|p| Date.parse(p[:start_date])}.min
+    # set_end_date = projects.map{|p| Date.parse(p[:end_date])}.max
+    # set_range = (set_start_date..set_end_date)
+    projects.each do |project|
+      puts Project.new(project).days_hash
     end
-    return days
   end
 
+end
+
+class Project 
+  def initialize(project_hash)
+    @start_date = Date.parse(project_hash[:start_date])
+    @end_date = Date.parse(project_hash[:end_date])
+    @city_cost = project_hash[:city_cost]
+  end
+  def days_hash
+    days_hash = {}
+    project_range = (@start_date..@end_date)
+    project_range.each_with_index do |d, i|
+      date_string = d.to_s
+      if i == 0 || i == project_range.to_a.length - 1
+        days_hash[date_string] = :travel
+      else 
+        days_hash[date_string] = :full
+      end
+    end
+    return days_hash
+  end
 end
 
 puts Reimburser.new.calculate(SET_1)
