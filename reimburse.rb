@@ -68,24 +68,40 @@ SET_4 = [
   }
 ]
 
+TRAVEL_COST_LOW = 45
+TRAVEL_COST_HIGH = 55
+FULL_COST_LOW = 75
+FULL_COST_HIGH = 85
 
-
-# questions
-# can a day be travel & full? (I think no)
-
-# thoughts
-# find start and end dates for set
-# iterate through dates, build array of "full" or "travel" elements
 
 class Reimburser  
   
   def calculate(projects) 
-    # set_start_date = projects.map{|p| Date.parse(p[:start_date])}.min
-    # set_end_date = projects.map{|p| Date.parse(p[:end_date])}.max
-    # set_range = (set_start_date..set_end_date)
-    projects.each do |project|
-      puts Project.new(project).days_hash
+    set_start_date = projects.map{|p| Date.parse(p[:start_date])}.min
+    set_end_date = projects.map{|p| Date.parse(p[:end_date])}.max
+    set_range = (set_start_date..set_end_date)
+    reimbursement_hash = {}
+    puts "Projects: ", projects
+    set_range.each do |date|
+      puts date
     end
+    # projects.each do |project|
+    #   project_reimbursement = Project.new(project).days_hash
+    #   # puts project_reimbursement
+    #   project_reimbursement.each do |p|
+    #     if reimbursement_hash[p[0]]
+    #       reimbursement_hash[p[0]] = project[:city_cost] == :low ? FULL_COST_LOW : FULL_COST_HIGH
+    #     else
+    #       if project[:city_cost] == :low
+    #         reimbursement_hash[p[0]] = p[1] == :travel ? TRAVEL_COST_LOW : FULL_COST_LOW
+    #       else
+    #         reimbursement_hash[p[0]] = p[1] == :travel ? TRAVEL_COST_HIGH : FULL_COST_HIGH
+    #       end
+    #     end
+    #   end
+    # end
+    # puts reimbursement_hash
+    # find gap days, project overlaps, etc convert to travel/full as needed
   end
 
 end
