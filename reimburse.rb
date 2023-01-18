@@ -1,4 +1,3 @@
-puts "hello world"
 require 'date'
 
 SET_1 = [
@@ -8,6 +7,7 @@ SET_1 = [
     end_date: Date.parse("2015-09-03")
   }
 ]
+# Day1: 45, Day2: 75, Day3: 45 = 165
 
 SET_2 = [
   {
@@ -26,6 +26,7 @@ SET_2 = [
     end_date: Date.parse("2015-09-08")
   }
 ]
+# Day1: 45, Day2: 85, Day3: 85, Day4: 85, Day5: 85, Day6: 85, Day7: 75, Day8: 45 = 590
 
 SET_3 = [
   {
@@ -44,6 +45,7 @@ SET_3 = [
     end_date: Date.parse("2015-09-08")
   }
 ]
+# Day1: 45, Day2: 75, Day3: 45, Day4: 0, Day5: 55, Day6: 85, Day7: 85, Day8: 55 = 445
 
 SET_4 = [
   {
@@ -67,39 +69,36 @@ SET_4 = [
     end_date: Date.parse("2015-09-03")
   }
 ]
+# Day1: 45, Day2: 85, Day3: 55 = 185
 
 TRAVEL_COST_LOW = 45
 TRAVEL_COST_HIGH = 55
 FULL_COST_LOW = 75
 FULL_COST_HIGH = 85
 
-
 class Reimburser  
-  
   def calculate(projects) 
     set_start_date = projects.map{|p| p[:start_date]}.min
     set_end_date = projects.map{|p| p[:end_date]}.max
     set_range = (set_start_date..set_end_date)
-    reimbursement_hash = {}
     reimbursement = 0
     set_range.each_with_index do |date, i|
-      # puts date
       active_projects = projects.select{|p| date.between? p[:start_date], p[:end_date]}
       active_projects_yesterday = projects.select{|p| (date-1).between? p[:start_date], p[:end_date]}
       active_projects_tomorrow = projects.select{|p| (date+1).between? p[:start_date], p[:end_date]}
-      # puts active_projects
-      city_cost = active_projects.map{|p| p[:city_cost]}.include? :high ? :high : :low
+
+      city_cost = active_projects.map{|p| p[:city_cost]}.include?(:high) ? :high : :low
       
-      # If two projects push up against each other, or overlap, then those days are full days as well.
-      # Any given day is only ever counted once, even if two projects are on the same day.
-      if active_projects.length > 1
-        reimbursement += city_cost == :high ? FULL_COST_HIGH : FULL_COST_LOW
       # First day and last day of a project, or sequence of projects, is a travel day.
       # If there is a gap between projects, then the days on either side of that gap are travel days.
-      elsif active_projects_yesterday.none? || active_projects_tomorrow.none?
+      if active_projects.any? && (active_projects_yesterday.none? || active_projects_tomorrow.none?)
         reimbursement += city_cost == :high ? TRAVEL_COST_HIGH : TRAVEL_COST_LOW
+      # If two projects push up against each other, or overlap, then those days are full days as well.
+      # Any given day is only ever counted once, even if two projects are on the same day.
+      elsif active_projects.length > 1
+        reimbursement += city_cost == :high ? FULL_COST_HIGH : FULL_COST_LOW
       # Any day in the middle of a project, or sequence of projects, is considered a full day.
-      else
+      elsif active_projects.any?
         reimbursement += city_cost == :high ? FULL_COST_HIGH : FULL_COST_LOW
       end
     end
