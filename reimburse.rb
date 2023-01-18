@@ -90,15 +90,16 @@ class Reimburser
       # puts active_projects
       city_cost = active_projects.map{|p| p[:city_cost]}.include? :high ? :high : :low
       
-      if active_projects.none?
-        next
-      elsif active_projects.length > 1
+      # If two projects push up against each other, or overlap, then those days are full days as well.
+      # Any given day is only ever counted once, even if two projects are on the same day.
+      if active_projects.length > 1
         reimbursement += city_cost == :high ? FULL_COST_HIGH : FULL_COST_LOW
-      elsif active_projects.first[:start_date] == date && active_projects_yesterday.none?
+      # First day and last day of a project, or sequence of projects, is a travel day.
+      # If there is a gap between projects, then the days on either side of that gap are travel days.
+      elsif active_projects_yesterday.none? || active_projects_tomorrow.none?
         reimbursement += city_cost == :high ? TRAVEL_COST_HIGH : TRAVEL_COST_LOW
-      elsif active_projects.first[:end_date] == date && active_projects_tomorrow.none?
-        reimbursement += city_cost == :high ? TRAVEL_COST_HIGH : TRAVEL_COST_LOW
-      elsif active_projects.length == 1
+      # Any day in the middle of a project, or sequence of projects, is considered a full day.
+      else
         reimbursement += city_cost == :high ? FULL_COST_HIGH : FULL_COST_LOW
       end
     end
