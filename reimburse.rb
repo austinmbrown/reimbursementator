@@ -106,7 +106,7 @@ class Reimburser
   end
 end
 
-puts Reimburser.new.calculate(SET_1)
-puts Reimburser.new.calculate(SET_2)
-puts Reimburser.new.calculate(SET_3)
-puts Reimburser.new.calculate(SET_4)
+puts "Set 1 reimbursement: #{Reimburser.new.calculate(SET_1)}"
+puts "Set 2 reimbursement: #{Reimburser.new.calculate(SET_2)}"
+puts "Set 3 reimbursement: #{Reimburser.new.calculate(SET_3)}"
+puts "Set 4 reimbursement: #{Reimburser.new.calculate(SET_4)}"
